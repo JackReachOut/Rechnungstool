@@ -1,3 +1,4 @@
+
 import pdfplumber
 import csv
 import os
@@ -8,7 +9,7 @@ def separate_csv(input_path, output_path):
     with open(input_path, 'r', newline='', encoding='utf-8') as infile, \
          open(output_path, 'w', newline='', encoding='utf-8-sig') as outfile:
         reader = csv.reader(infile)
-        writer = csv.writer(outfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         for row in reader:
             writer.writerow(row)
 
@@ -126,8 +127,12 @@ try:
         writer.writerows(data)
     print(f"Daten extrahiert von {pdf_path} und gespeichert in {csv_path}")
     # Now separate output.csv into seperated_output.csv for Excel compatibility
-    separate_csv(csv_path, seperated_csv_path)
-    print(f"CSV wurde für Excel-Kompatibilität in {seperated_csv_path} gespeichert.")
+    try:
+        print(f"Starte Separation: {csv_path} -> {seperated_csv_path}")
+        separate_csv(csv_path, seperated_csv_path)
+        print(f"CSV wurde für Excel-Kompatibilität in {seperated_csv_path} gespeichert.")
+    except Exception as sep_err:
+        print(f"Fehler bei Separation: {sep_err}")
     print("Programm erfolgreich abgeschlossen.")
 except FileNotFoundError as e:
     print(f"FileNotFoundError: {e}")
