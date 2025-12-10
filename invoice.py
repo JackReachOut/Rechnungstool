@@ -16,9 +16,9 @@ if script_dir != cwd:
     print("[WARN] Script location and current working directory differ. Using current working directory for all file operations.")
     script_dir = cwd
 try:
-    # Dynamically find the first PDF in the script's directory, compatible with PyInstaller/frozen executables
+    # Dynamically find the first PDF in the working directory, compatible with PyInstaller/frozen executables
     if getattr(sys, 'frozen', False):
-        base_path = sys._MEIPASS
+        base_path = cwd
     else:
         base_path = script_dir
     print(f"[INFO] PDF-Suchverzeichnis (base_path): {base_path}")
