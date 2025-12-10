@@ -1,3 +1,4 @@
+
 import pdfplumber
 import csv
 import os
@@ -5,14 +6,19 @@ import glob
 import sys
 
 print("Programm gestartet.")
+# Print script location and current working directory for clarity
+script_dir = os.path.dirname(os.path.abspath(__file__))
+cwd = os.getcwd()
+print(f"[INFO] Script location: {script_dir}")
+print(f"[INFO] Current working directory: {cwd}")
 try:
     # Dynamically find the first PDF in the script's directory, compatible with PyInstaller/frozen executables
     if getattr(sys, 'frozen', False):
         base_path = sys._MEIPASS
     else:
-        base_path = os.path.dirname(os.path.abspath(__file__))
-    print(f"Arbeitsverzeichnis (PDF-Suche): {base_path}")
-    print("Suche nach PDF-Dateien in:", os.path.join(base_path, '*.pdf'))
+        base_path = script_dir
+    print(f"[INFO] PDF-Suchverzeichnis (base_path): {base_path}")
+    print("[INFO] Suche nach PDF-Dateien in:", os.path.join(base_path, '*.pdf'))
     pdf_files = glob.glob(os.path.join(base_path, '*.pdf'))
     if not pdf_files:
         print("Fehler: Keine PDF-Datei im Arbeitsverzeichnis gefunden.")
