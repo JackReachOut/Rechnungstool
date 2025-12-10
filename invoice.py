@@ -1,35 +1,27 @@
-
 import pdfplumber
 import csv
 import os
 import glob
 import sys
 
-def separate_csv(input_path, output_path):
-    with open(input_path, 'r', newline='', encoding='utf-8') as infile, \
-         open(output_path, 'w', newline='', encoding='utf-8-sig') as outfile:
-        reader = csv.reader(infile)
-        writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        for row in reader:
-            writer.writerow(row)
-
 print("Programm gestartet.")
 try:
     # Dynamically find the first PDF in the script's directory, compatible with PyInstaller/frozen executables
     if getattr(sys, 'frozen', False):
-        script_dir = os.path.dirname(sys.executable)
+        base_path = sys._MEIPASS
     else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(f"Arbeitsverzeichnis: {script_dir}")
-    print("Suche nach PDF-Dateien...")
-    pdf_files = glob.glob(os.path.join(script_dir, '*.pdf'))
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    print(f"Arbeitsverzeichnis (PDF-Suche): {base_path}")
+    print("Suche nach PDF-Dateien in:", os.path.join(base_path, '*.pdf'))
+    pdf_files = glob.glob(os.path.join(base_path, '*.pdf'))
     if not pdf_files:
         print("Fehler: Keine PDF-Datei im Arbeitsverzeichnis gefunden.")
+        print(f"Verzeichnis durchsucht: {base_path}")
+        input("Drücken Sie Enter, um das Programm zu beenden...")
         raise FileNotFoundError('No PDF file found in the script directory.')
     pdf_path = pdf_files[0]
     print(f"PDF gefunden: {pdf_path}")
-    csv_path = os.path.join(script_dir, 'output.csv')
-    seperated_csv_path = os.path.join(script_dir, 'seperated_output.csv')
+    csv_path = os.path.join(base_path, 'output.csv')
 
     data = []
 
@@ -123,18 +115,13 @@ try:
 
     print("PDF-Iteration abgeschlossen.")
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, delimiter=';')
         writer.writerows(data)
     print(f"Daten extrahiert von {pdf_path} und gespeichert in {csv_path}")
-    # Now separate output.csv into seperated_output.csv for Excel compatibility
-    try:
-        print(f"Starte Separation: {csv_path} -> {seperated_csv_path}")
-        separate_csv(csv_path, seperated_csv_path)
-        print(f"CSV wurde für Excel-Kompatibilität in {seperated_csv_path} gespeichert.")
-    except Exception as sep_err:
-        print(f"Fehler bei Separation: {sep_err}")
     print("Programm erfolgreich abgeschlossen.")
 except FileNotFoundError as e:
     print(f"FileNotFoundError: {e}")
+    input("Drücken Sie Enter, um das Programm zu beenden...")
 except Exception as e:
     print(f"Ein Fehler ist aufgetreten: {e}")
+    input("Drücken Sie Enter, um das Programm zu beenden...")
