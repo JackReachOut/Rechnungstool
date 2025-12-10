@@ -11,6 +11,10 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 cwd = os.getcwd()
 print(f"[INFO] Script location: {script_dir}")
 print(f"[INFO] Current working directory: {cwd}")
+# If script location and cwd differ, use cwd for all file operations
+if script_dir != cwd:
+    print("[WARN] Script location and current working directory differ. Using current working directory for all file operations.")
+    script_dir = cwd
 try:
     # Dynamically find the first PDF in the script's directory, compatible with PyInstaller/frozen executables
     if getattr(sys, 'frozen', False):
